@@ -1,0 +1,57 @@
+﻿@model ShopNowBL.Model.tblUser
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jquery")
+</head>
+
+
+<body >
+    @using (Html.BeginForm("authenticateUser", "User", FormMethod.Post))
+    {
+        if (!string.IsNullOrEmpty(ViewBag.InvalidUser))
+        {
+            <script>
+                alert("Invalid User Details!!")
+            </script>
+        }
+        <div class=" col-md-4 offset-md-4 " >
+            <h1 class="display-4 text-center " >Login</h1>
+            <hr />
+            <div class="row mb-3 input-group  ">
+                @Html.Label("EmailId", "UserId", new { @class = "form-label text-center" })
+                
+                    @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control col-md-4 offset-md-4", autofocus = true } })
+                
+            </div>
+
+            <div class="row mb-3  input-group">
+                @Html.Label("Password", "Password", new { @class = "form-label text-center" })
+                
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control ", autofocus = true } })
+                
+            </div>
+            <br />
+            <div class="row mb-3">
+                <div class="text-center">
+                    <input type="submit" value="Login" class="btn btn-primary" />
+                </div>
+            </div>
+
+
+        </div>
+    }
+</body>
+    
+</html>

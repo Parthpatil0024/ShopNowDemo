@@ -1,0 +1,150 @@
+﻿
+@{
+    ViewBag.Title = "ajaxAddProductListing";
+}
+
+<h2>ajaxAddProductListing</h2>
+<div class="form-horizontal">
+
+    <hr />
+    <input type="hidden" id="hdnProductId" />
+   
+    <div class="row mb-3  input-group">
+        @Html.Label("ProductName", "Product Name", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="prodName">        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("ProductQty", "Product Qty", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="prodQty">        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("BasePrice", "Base Price", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="basePrice">        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("SellingPrice", "Selling Price", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="sellPrice">        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("Discount", "Discount", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="discount">        </div>
+    </div>
+
+
+    <br />
+    <div class="row mb-3  input-group">
+        <div class="col offset-2 col-md-4">
+            <input type="submit" value="Save" class="btn btn-success" onclick="AddProduct();" />
+        </div>
+    </div>
+</div>
+
+<div id="div1"></div>
+
+<script>
+    $(document).ready(function () {
+        LoadData();
+    })
+    function LoadData() {
+        $.ajax({
+            url: '@Url.Action("ajaxListProducts", "Stock")',
+            success: function (result) {
+                $("#div1").html(result);
+            }
+        });
+    }
+    function AddProduct() {
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxAddproduct", "Stock")', // Controller/View
+                data: '{ProductName: ' + JSON.stringify($("#prodName").val()) + ', ProductQty:' + JSON.stringify($("#prodQty").val()) +
+                    ', BasePrice:' + JSON.stringify($("#basePrice").val()) + ', SellingPrice:' + JSON.stringify($("#sellPrice").val())
+                    + ', Discount:' + JSON.stringify($("#discount").val()) + ', Id:' + JSON.stringify($("#hdnProductId").val()) + '}',
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    $("#prodName").val("");
+                    $("#prodQty").val("");
+                    $("#basePrice").val("");
+                    $("#sellPrice").val("");
+                    $("#discount").val("");
+                    LoadData();
+
+                }
+
+            });
+
+    }
+    function GetProduct(id) {
+
+        $("#hdnProductId").val(id);
+        console.log(id);
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxGetProdById", "Stock")', // Controller/View
+                data: '{Id: ' + JSON.stringify($("#hdnProductId").val()) + '}',
+
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+
+                    $("#prodName").val(result.ProductName);
+                    $("#prodQty").val(result.ProductQty);
+                    $("#basePrice").val(result.BasePrice);
+                    $("#sellPrice").val(result.SellingPrice);
+                    $("#discount").val(result.Discount);
+
+                    LoadData();
+
+                }
+
+            });
+
+
+    }
+    function DeleteProduct(id) {
+        if (confirm('Confirm Delete?')) {
+
+            $("#hdnProductId").val(id);
+
+            $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    url: '@Url.Action("ajaxDeleteProduct", "Stock")', // Controller/View
+                    data: '{Id: ' + JSON.stringify($("#hdnProductId").val()) + '}',
+
+
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        
+
+
+                        LoadData();
+
+                    }
+
+                });
+        }
+
+
+    }
+</script>
+

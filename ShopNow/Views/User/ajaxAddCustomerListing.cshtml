@@ -1,0 +1,305 @@
+﻿
+@{
+    ViewBag.Title = "ajaxAddCustomerListing";
+}
+
+<h3>ajaxAddCustomerListing</h3>
+
+
+<div class="form-horizontal">
+
+    <hr />
+
+    <input type="hidden" id="hdnCustId" />
+
+    <h3>Add Customer</h3>
+    
+    <div class="row mb-3  input-group">
+
+        @Html.Label("CustomerName", "Customer Name", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="custName">
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("MobileNo", "Mobile No", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="mobNo">
+        </div>
+    </div>
+
+
+
+
+    <br />
+    <div class="row mb-3  input-group">
+        <div class="col offset-2 col-md-4">
+            <input type="button" value="Save" class="btn btn-success" onclick="AddCustomer();" />
+        </div>
+    </div>
+</div>
+
+
+<div class="form-horizontal">
+
+    <hr />
+    <h3>Add User</h3>
+
+    <input type="hidden" id="hdnUserId" />
+
+    <div class="row mb-3  input-group">
+        @Html.Label("UserName", "User Name", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="userName" />
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("EmailId", "Email Id", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="emailId" />
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("MobileNo", "Mobile No", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="mobileNo" />
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("RoleId", "Role", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <select id="roleId">
+                <option disabled selected value> --select-- </option>
+                <option value="1">Admin</option>
+                <option value="2">Cashier</option>
+
+            </select>
+
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("Password", "Password", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="password" />
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("City", "City", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="city" />
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("StoreId", "Store Id", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="storeId" />
+        </div>
+    </div>
+
+
+    <div class="row mb-3  input-group">
+        <div class="col offset-2 col-md-4">
+            <input type="button" value="Save" class="btn btn-success" onclick="AddUser();" />
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div id="div1"></div>
+
+
+<script>
+    $(document).ready(function () {
+        LoadData();
+    })
+    function LoadData() {
+        $.ajax({
+            url:'@Url.Action("ajaxListUserCustomer", "User")',
+            success: function (result) {
+                $("#div1").html(result);
+            }
+        });
+
+    }
+    function AddCustomer() {
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxAddCustomer", "User")', // Controller/View
+                data: '{CustomerName: ' + JSON.stringify($("#custName").val()) + ', MobileNo:' + JSON.stringify($("#mobNo").val()) + ', Id:' + JSON.stringify($("#hdnCustId").val()) + '}',
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log("Success");
+                    $("#custName").val("");
+                    $("#mobNo").val("");
+                    LoadData();
+
+                }
+
+            });
+
+    }
+    function GetCustomer(id) {
+
+        $("#hdnCustId").val(id);
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxGetCustById", "User")', // Controller/View
+                data: '{Id: ' + JSON.stringify($("#hdnCustId").val()) + '}',
+
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log("Success");
+                    $("#custName").val(result.CustomerName);
+                    $("#mobNo").val(result.MobileNo);
+
+                    LoadData();
+
+                }
+
+            });
+
+
+    }
+    function DeleteCustomer(id) {
+        if (confirm('Confirm Delete?')) {
+
+            $("#hdnCustId").val(id);
+
+            $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    url: '@Url.Action("ajaxDeleteCustomer", "User")', // Controller/View
+                    data: '{Id: ' + JSON.stringify($("#hdnCustId").val()) + '}',
+
+
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        $("#custName").val("");
+                        $("#mobNo").val("");
+
+
+                        LoadData();
+
+                    }
+
+                });
+        }
+
+
+    }
+
+
+     function AddUser() {
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxAddUser", "User")', // Controller/View
+                data: '{UserName: ' + JSON.stringify($("#userName").val()) + ', EmailId:' + JSON.stringify($("#emailId").val())
+                    + ', MobileNo:' + JSON.stringify($("#mobileNo").val()) + ', RoleId:' + JSON.stringify($("#roleId").val())
+                    + ', Password:' + JSON.stringify($("#password").val())
+                    + ', City:' + JSON.stringify($("#city").val()) + ', StoreId:' + JSON.stringify($("#storeId").val())
+                    + ', Id:' + JSON.stringify($("#hdnUserId").val()) + '}',
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log("Success");
+                    $("#userName").val("");
+                    $("#emailId").val("");
+                    $("#mobileNo").val("");
+                    $("#roleId").val("");
+                    $("#password").val("");
+                    $("#city").val("");
+                    $("#storeId").val("");
+                    LoadData();
+
+                }
+
+            });
+
+    }
+
+    function GetUser(id) {
+
+        $("#hdnUserId").val(id);
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxGetUserById", "User")', // Controller/View
+                data: '{Id: ' + JSON.stringify($("#hdnUserId").val()) + '}',
+
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log("Success");
+                    $("#userName").val(result.UserName);
+                    $("#emailId").val(result.EmailId);
+                    $("#mobileNo").val(result.MobileNo);
+                    $("#roleId").val(result.RoleId);
+                    $("#password").val(result.Password);
+                    $("#city").val(result.City);
+                    $("#storeId").val(result.StoreId);
+
+                    LoadData();
+
+                }
+
+            });
+
+
+    }
+     function DeleteUser(id) {
+        if (confirm('Confirm Delete?')) {
+
+            $("#hdnUserId").val(id);
+
+            $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    url: '@Url.Action("ajaxDeleteUser", "User")', // Controller/View
+                    data: '{Id: ' + JSON.stringify($("#hdnUserId").val()) + '}',
+
+
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                       
+
+
+                        LoadData();
+
+                    }
+
+                });
+        }
+
+
+    }
+</script>
+
+

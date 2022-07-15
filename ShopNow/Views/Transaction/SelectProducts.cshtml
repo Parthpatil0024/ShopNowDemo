@@ -1,0 +1,402 @@
+﻿
+@{
+    ViewBag.Title = "SelectProducts";
+}
+
+
+
+
+<div id="invoice"></div>
+<div id="selectProducts">
+    <div>
+        <h2>SelectProducts</h2>
+
+        <table id='ListData' class="table table-dark table-bordered table-hover table-sm">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th class="text-center">Buy Product</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <table id='orderItems' class="table table-dark table-bordered table-hover table-sm">
+        <thead>
+            <tr>
+                <th>Product Id</th>
+                <th>Product Name</th>
+                <th> Price</th>
+
+                <th>Discount</th>
+                <th>GST</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th class="text-center">Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <br />
+    <label class=" col-md-1 offset-11 ">Total Bill</label>
+    <input type="text" id="totalBill" readonly class="form-control-sm col-md-1 offset-11" value="0" />
+    <div>
+        <br />
+        <button type="button" class="btn btn-success col-md-1 offset-11" id="proceed" data-bs-toggle="modal" data-bs-target="#AddCust" style="display:none">Proceed>></button>
+
+    </div>
+
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Product</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <form id="first_form" method="post" action="">
+                            <div class="form-group">
+                                <input type="hidden" id="hdnProductId" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Product Name</label>  <input type="text" id="prodName" class=" input-group" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Selling Price</label> <input type="text" id="sellPrice" class=" input-group" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                Discount <input type="number" id="discount" class=" input-group" readonly />
+                            </div>
+                            <div>
+                                GST<input type="number" id="gst" class=" input-group" min="0" />
+                            </div>
+                            <div>
+                                Quantity<input type="number" id="Qty" class=" input-group" required />
+                            </div>
+
+
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer form-group">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Add</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal" id="AddCust">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Checkout</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+
+                    <div class="form-horizontal">
+                        <form id="first_form" method="post" action="">
+
+                            <div class="form-group">
+                                <label class="control-label">Customer Name</label>  <input type="text" id="custName" class=" input-group" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mobile No</label> <input type="text" id="mobileNo" class=" input-group" required />
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select id="paymentMethod" required>
+                                    <option disabled selected value> --select-- </option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Card">Card</option>
+                                    <option value="UPI">UPI</option>
+
+                                </select>
+
+
+
+                            </div>
+
+
+
+
+                            <!-- Modal footer -->
+                            <br />
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="AddTransaction();">Done</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        GetData();
+        $("#first_form").submit(feedTable);
+
+    })
+        var totalGST = 0;
+        var totalDiscount = 0;
+
+    function GetData() {
+        $.ajax({
+            type: "GET",
+            url: "/Stock/ajaxGetProductList",
+            dataType: 'json',
+            contentType: "application/json;",
+            success: function (data) {
+
+
+                $('#ListData tbody').empty();
+                $.each(data, function (key, item) {
+
+
+                    $('#ListData tbody').append(
+                        '<tr><td>' + item.ProductName +
+                        '</td><td>' + item.SellingPrice+" Rs." +
+                        '</td><td>' + item.Discount+"%" +
+                        '</td><td class="text-center" onclick="GetProduct(' + item.Id + ')"><a href="#"><i class="fa  fa-plus"  data-bs-toggle="modal" data-bs-target="#myModal" style="color:red"></i></a> ' +
+                        '</td></tr>'
+                    )
+
+
+                });
+                $('#ListData').DataTable();
+            }
+
+        });
+    }
+
+    function GetProduct(id) {
+
+        $("#hdnProductId").val(id);
+
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxGetProdById", "Stock")', // Controller/View
+                data: '{Id: ' + JSON.stringify($("#hdnProductId").val()) + '}',
+
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+
+
+                    $("#prodName").val(result.ProductName);
+
+
+                    $("#sellPrice").val(result.SellingPrice);
+                    $("#discount").val(result.Discount);
+
+
+
+                }
+
+            });
+
+
+    }
+
+    function CalcTotalBill() {
+        var totalBill = 0;
+        $(".total").each(function () {
+            totalBill += parseFloat($(this).text());
+        });
+        $("#totalBill").val(totalBill);
+    }
+
+
+    function feedTable(e) {
+        e.preventDefault();
+        if (!this.snNo) this.snNo = 1;
+        var Name = $('#prodName').val(),
+            Id = $('#hdnProductId').val(),
+            SPrice = $('#sellPrice').val(),
+            Discount = $('#discount').val(),
+            Qty = $('#Qty').val()
+        GST = $("#gst").val()
+
+        var finalPrice = (SPrice * Qty) - (SPrice * Qty * (Discount / 100)) + (SPrice * Qty * (GST / 100))
+        totalDiscount = totalDiscount + (SPrice * Qty * (Discount / 100))
+
+        totalGST = totalGST + (SPrice * Qty * (GST / 100))
+
+
+
+        $('#orderItems').append(
+            "<tr><td class='id'>" + Id + "</td>" +
+            "<td>" + Name + "</td>" +
+            "<td>" + SPrice+" Rs" + "</td>" +
+            "<td>" + Discount +"%"+ "</td>" +
+            "<td>" + GST +"%"+ "</td>" +
+            "<td class='quantity'>" + Qty + "</td>" +
+            "<td class='total'>" + finalPrice + "</td> " +
+            "<td class='text-center'><button type='button' class='btn btn-sm btn-danger' id='remove' onclick='removeRow()'>"
+            +  "Remove"+
+           " </button></td></tr>"
+        )
+        this.snNo += 1;
+        CalcTotalBill();
+
+        $("#Qty").val("");
+        $("#gst").val("");
+        cleanTable();
+        $("#proceed").show();
+
+
+
+    }
+
+        function AddTransaction() {
+            var count = $('#orderItems tr').length - 1;
+
+            var TItems = new Array();
+
+                $("#orderItems TBODY TR ").each(function () {
+
+                var row = $(this);
+                var TItem = {};
+                TItem.ProductId = row.find("TD").eq(0).html();
+                TItem.Qty = row.find("TD").eq(5).html();
+                    TItem.Price = row.find("TD").eq(6).html();
+                    TItems.push(TItem);
+
+            });
+
+
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxAddTransaction", "Transaction")', // Controller/View
+                data: '{CustomerName: ' + JSON.stringify($("#custName").val()) + ', MobileNo:' + JSON.stringify($("#mobileNo").val())
+                    + ', TotalQty:' + JSON.stringify(count) + ', InvoiceAmount:' + JSON.stringify($("#totalBill").val())
+                    + ', GST:' + JSON.stringify(totalGST) + ', TotalDiscount:' + JSON.stringify(totalDiscount)
+                    + ', PaymentMethod:' + JSON.stringify($("#paymentMethod").val()) + ', TransactionItems:' + JSON.stringify(TItems) + '}',
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    generateInvoice(result);
+
+                    $("#orderItems TBODY tr").remove();
+                    $("#totalBill").val("");
+
+
+                   
+
+                },
+                error: function () {
+                    alert("Purchase failed!!!");
+                }
+
+            });
+
+        }
+
+
+        function cleanTable() {
+            for (var i = 0; i < $('#orderItems tbody tr').length; i++) {
+                for (var j = 0; j < $('#orderItems tbody tr').length; j++) {
+                    if ($('#orderItems tbody tr').eq(i).html() == $('#orderItems tbody tr').eq(j).html() && i != j) {
+
+                        $('#orderItems tbody tr').eq(j).remove();
+                    }
+                }
+            }
+
+        }
+
+        function removeRow() {
+            $('#orderItems').on('click', '#remove', function () {
+                $(this).closest('tr').remove();
+                CalcTotalBill();
+            });
+        }
+
+        function generateInvoice(InvoiceNo) {
+            console.log(InvoiceNo);
+           
+
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("generateInvoice", "Transaction")', // Controller/View
+                data: '{InvoiceNo: ' + JSON.stringify(InvoiceNo) + '}',
+
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (result) {
+
+                    $("#selectProducts").hide();
+                    $("#invoice").html(result);
+
+
+
+                }
+
+            });
+
+
+    }
+        
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+

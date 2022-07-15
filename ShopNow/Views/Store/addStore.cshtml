@@ -1,0 +1,60 @@
+﻿@model ShopNowBL.Model.tblStore
+
+@{
+    ViewBag.Title = "addStore";
+}
+
+<h2>Add Store</h2>
+
+@using (Html.BeginForm("saveStore","Store",FormMethod.Post))
+{
+
+
+    <div class="form-horizontal">
+
+        <hr />
+        @Html.HiddenFor(model => model.Id)
+        <div class="row mb-3  input-group">
+            @Html.Label("StoreName", "Store Name", new { @class = "control-label col-md-1" })
+            <div class="col-md-11">
+                @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "form-control", autofocus = true } })
+            </div>
+        </div>
+
+        <div class="row mb-3  input-group">
+            @Html.Label("Address", "Address", new { @class = "control-label col-md-1" })
+            <div class="col-md-11">
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="row mb-3  input-group">
+            @Html.Label("City", "City", new { @class = "control-label col-md-1" })
+            <div class="col-md-11">
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="row mb-3  input-group">
+            @Html.Label("ContactNo", "Contact No", new { @class = "control-label col-md-1" })
+            <div class="col-md-11">
+                @Html.EditorFor(model => model.ContactNo, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+        </div>
+
+        <div class="row mb-3  input-group">
+            @Html.Label("StartedDate", "Started date", new { @class = "control-label col-md-1" })
+            <div class="col-md-11">
+                @Html.EditorFor(model => model.StartedDate, new { htmlAttributes = new { @class = "form-control", @type="date" } })
+            </div>
+        </div>
+        <br />
+        <div class="row mb-3  input-group">
+            <div class="col offset-2 col-md-4">
+                <input type="submit" value="Save" class="btn btn-success" />
+            </div>
+        </div>
+    </div>
+}
+
+

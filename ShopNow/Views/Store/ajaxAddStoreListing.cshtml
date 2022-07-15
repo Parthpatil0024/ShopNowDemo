@@ -1,0 +1,186 @@
+﻿@model ShopNowBL.Model.tblStore
+@{
+    ViewBag.Title = "ajaxAddStoreListing";
+}
+
+<h2>ajaxAddStoreListing</h2>
+
+<div class="form-horizontal">
+
+    <hr />
+    <input type="hidden" id="hdnstoreId" />
+
+    <div class="row mb-3  input-group">
+        @Html.Label("StoreName", "Store Name", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="storeName">
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("Address", "Address", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="address">
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("City", "City", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="city">
+        </div>
+    </div>
+
+    <div class="row mb-3  input-group">
+        @Html.Label("ContactNo", "Contact No", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="text" id="contact">
+        </div>
+    </div>
+
+
+    <div class="row mb-3  input-group">
+        @Html.Label("StartedDate", "Started Date", new { @class = "control-label col-md-1" })
+        <div class="col-md-11">
+            <input type="date" required   id="startDate">
+        </div>
+    </div>
+    <br />
+    <div class="row mb-3  input-group">
+        <div class="col offset-2 col-md-4">
+            <input type="submit" value="Save" class="btn btn-success" onclick="AddStore();" />
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="div1">
+
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        LoadData();
+    })
+    function LoadData() {
+        $.ajax({
+            url: '@Url.Action("ajaxListStores", "Store")',
+            success: function (result) {
+                console.log(result)
+                $("#div1").html(result);
+            }
+        });
+    }
+
+    function AddStore() {
+        $("#startDate").defa
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("ajaxAddStore", "Store")', // Controller/View
+                data: '{StoreName: ' + JSON.stringify($("#storeName").val()) + ', Address:' + JSON.stringify($("#address").val()) +
+                    ', City:' + JSON.stringify($("#city").val()) + ', ContactNo:' + JSON.stringify($("#contact").val()) + ', StartedDate:' + JSON.stringify($("#startDate").val()) + ', Id:' + JSON.stringify($("#hdnstoreId").val())
+                     + '}',
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log("Success");
+                    $("#storeName").val("");
+                    $("#address").val("");
+                    $("#city").val("");
+                    $("#contact").val("");
+                    $("#startDate").val("");
+
+
+                    LoadData();
+
+                }
+
+            });
+
+    }
+
+    function GetStore(id) {
+
+        $("#hdnstoreId").val(id);
+
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: '@Url.Action("getStoreById", "Store")', // Controller/View
+                data: '{Id: ' + JSON.stringify($("#hdnstoreId").val()) + '}',
+
+
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log("Success");
+                    $("#storeName").val(result.StoreName);
+                    $("#address").val(result.Address);
+                    $("#city").val(result.City);
+                    $("#contact").val(result.ContactNo);
+                    $("#startDate").val(result.StrStartedDate);
+
+                    LoadData();
+
+                }
+
+            });
+
+
+    }
+    function DeleteStore(id) {
+        if (confirm('Confirm Delete?')) {
+
+            $("#hdnstoreId").val(id);
+
+            $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    url: '@Url.Action("ajaxDeleteStore", "Store")', // Controller/View
+                    data: '{Id: ' + JSON.stringify($("#hdnstoreId").val()) + '}',
+
+
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        $("#storeName").val("");
+                        $("#address").val("");
+                        $("#city").val("");
+                        $("#contact").val("");
+
+
+                        LoadData();
+
+                    }
+
+                });
+        }
+
+
+    }
+</script>

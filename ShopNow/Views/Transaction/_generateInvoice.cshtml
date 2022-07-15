@@ -1,0 +1,51 @@
+﻿@model ShopNow.ViewModels1.InvoiceViewModel
+<h1 class="text-center">Invoice</h1>
+@if (string.IsNullOrEmpty(Convert.ToString(ViewBag.Hide)))
+{
+
+    <a href="@Url.Action("PrintInvoice","Transaction",new {InvoiceNo=Model.objTrans.InvoiceNo})" class="col-md-2 offset-10" target="_blank"><h6><i class="fa fa-lg fa-print"></i></h6></a>
+}
+
+
+
+<h6>Invoice No: @Model.objTrans.InvoiceNo</h6>
+<h6 class="col-md-2 offset-10"> Date: @Model.objTrans.InvoiceDate.Date</h6>
+<h6>Customer Name : @Model.customer.CustomerName</h6>
+<h6>Mobile No: @Model.customer.MobileNo</h6>
+<hr />
+<table class="table table-bordered  table-sm">
+    <thead>
+        <tr class="text-center">
+            <th>Product Id</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th> Price</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.listTransItems)
+        {
+            <tr>
+                <td class="text-center">@item.ProductId</td>
+                <td class="text-center">@item.tblStock.ProductName</td>
+                <td class="text-center">@item.Qty</td>
+                <td class="text-center">@item.Price Rs.</td>
+
+
+
+
+            </tr>
+
+        }
+
+    </tbody>
+
+</table>
+<hr />
+<h6>Payment Method: @Model.objTrans.PaymentMethod</h6>
+<h6 class="col-md-2 offset-10">Total GST: @Model.objTrans.GST Rs.</h6>
+<h6 class="col-md-3 offset-10">Total Discount: @Model.objTrans.TotalDiscount Rs.</h6>
+<h5  class="col-md-2 offset-10 fw-bold"> Total: @Model.objTrans.InvoiceAmount Rs.</h5>
+
+

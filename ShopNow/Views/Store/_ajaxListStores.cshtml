@@ -1,0 +1,74 @@
+﻿@model List<ShopNowBL.Model.tblStore>
+
+@{
+    ViewBag.Title = "listStores";
+}
+
+
+
+
+
+<table class="table table-dark table-bordered table-hover table-sm">
+    <tr>
+        <th>
+            Store Id
+        </th>
+        <th>
+            Store Name
+        </th>
+        <th>
+            Address
+        </th>
+        <th>
+            City
+        </th>
+        <th>
+            Contact No
+        </th>
+        <th>
+            Started Date
+        </th>
+        <th>
+            Created By
+        </th>
+        <th>
+            Created Date
+        </th>
+        <th class="text-center">
+            Actions
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @item.Id
+            </td>
+            <td>
+                @item.StoreName
+            </td>
+            <td>
+                @item.Address
+            </td>
+            <td>
+                @item.City
+            </td>
+            <td>
+                @item.ContactNo
+            </td>
+            <td>
+                @item.StrStartedDate
+            </td>
+            <td>
+                @item.CreatedBy
+            </td>
+            <td>
+                @item.CreatedDate
+            </td>
+            <td class="text-center">
+                <a href="#" onclick="GetStore(@item.Id)"><i class="fas fa-pen"></i></a>  &nbsp;|&nbsp;
+                <a href="#" onclick="DeleteStore(@item.Id)"><i class="fa  fa-trash" style="color:red"></i> </a>
+            </td>
+        </tr>
+    }
+</table>
