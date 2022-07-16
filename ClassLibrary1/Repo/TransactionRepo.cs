@@ -28,85 +28,90 @@ namespace ShopNowBL.Repo
         {
             bool result = false;
 
-            
+
             using (DBTContext context = new DBTContext())
             {
                 context.Configuration.ProxyCreationEnabled = false;
-                try
+                using (var transaction = context.Database.BeginTransaction())
                 {
-                    
-                    result = context.tblCustomers.Where(x => x.MobileNo == objCust.MobileNo).Any();
-
-                    if (!result)
+                    try
                     {
-                        //Add Customer
-                        tblCustomer customer = new tblCustomer();
 
-                        customer.MobileNo = objCust.MobileNo;
-                        customer.CustomerName = objCust.CustomerName;
-                        customer.CreatedDate = DateTime.Now;
-                        customer.CreatedBy = 1;
-                        
-                        context.tblCustomers.Add(customer);
+                        result = context.tblCustomers.Where(x => x.MobileNo == objCust.MobileNo).Any();
+
+                        if (!result)
+                        {
+                            //Add Customer
+                            tblCustomer customer = new tblCustomer();
+
+                            customer.MobileNo = objCust.MobileNo;
+                            customer.CustomerName = objCust.CustomerName;
+                            customer.CreatedDate = DateTime.Now;
+                            customer.CreatedBy = 1;
+
+                            context.tblCustomers.Add(customer);
+                            context.SaveChanges();
+                            objTrans.CustomerId = customer.Id;
+
+                        }
+                        else
+                        {
+
+                            tblCustomer customer = context.tblCustomers.Where(x => x.MobileNo == objCust.MobileNo).FirstOrDefault();
+                            objTrans.CustomerId = customer.Id;
+                        }
+                        //Capture Transaction
+                        objTrans.CreatedDate = DateTime.Now;
+                        objTrans.CreatedBy = 1;
+                        objTrans.InvoiceNo = GenerateId();
+                        objTrans.InvoiceDate = DateTime.Now;
+                        context.tblTransactions.Add(objTrans);
                         context.SaveChanges();
-                        objTrans.CustomerId = customer.Id;
+
+                        //Capture Transaction Items
+                        foreach (tblTransactionItem T in TransactionItems)
+                        {
+                            tblTransactionItem Item = new tblTransactionItem();
+                            Item.InvoiceId = objTrans.InvoiceNo;
+                            Item.Qty = T.Qty;
+                            Item.ProductId = T.ProductId;
+                            Item.Price = T.Price;
+                            context.tblTransactionItems.Add(Item);
+                            context.SaveChanges();
+
+
+                            //Update Stock
+                            tblStock stock = stockRepo.getProductById(Item.ProductId);
+                            stock.ProductQty -= Convert.ToInt32(Item.Qty);
+                            context.tblStocks.AddOrUpdate(stock);
+                            context.SaveChanges();
+                            
+
+                        }
+
+                        transaction.Commit();
+                        result = true;
+
+
+
+
+
+
+
 
                     }
-                    else
+
+
+                    catch (Exception ex)
                     {
-                       
-                        tblCustomer customer = context.tblCustomers.Where(x => x.MobileNo == objCust.MobileNo).FirstOrDefault();
-                        objTrans.CustomerId = customer.Id;
+                        transaction.Rollback();
+                        result = false;
+                        throw ex;
+
                     }
-                    //Capture Transaction
-                    objTrans.CreatedDate = DateTime.Now;
-                    objTrans.CreatedBy = 1;
-                    objTrans.InvoiceNo = GenerateId();
-                    objTrans.InvoiceDate = DateTime.Now;
-                    context.tblTransactions.Add(objTrans);
-                    context.SaveChanges();
-
-                    //Capture Transaction Items
-                    foreach(tblTransactionItem T in TransactionItems)
-                    {
-                        tblTransactionItem Item=new tblTransactionItem();
-                        Item.InvoiceId = objTrans.InvoiceNo;
-                        Item.Qty = T.Qty;
-                        Item.ProductId = T.ProductId;
-                        Item.Price = T.Price;
-                        context.tblTransactionItems.Add(Item);
-                        context.SaveChanges();
-                       
-
-                        //Update Stock
-                        tblStock stock = stockRepo.getProductById(Item.ProductId);
-                        stock.ProductQty -= Convert.ToInt32(Item.Qty);
-                        context.tblStocks.AddOrUpdate(stock);
-                        context.SaveChanges();
-                        
-                    }
-
-
-                    result = true;
-
-
-
-
-
-
 
 
                 }
-
-              
-                catch (Exception ex)
-                {
-                    result = false;
-                    throw ex;
-
-                }
-
-
             }
 
 

@@ -3,7 +3,7 @@
 @if (string.IsNullOrEmpty(Convert.ToString(ViewBag.Hide)))
 {
 
-    <a href="@Url.Action("PrintInvoice","Transaction",new {InvoiceNo=Model.objTrans.InvoiceNo})" class="col-md-2 offset-10" target="_blank"><h6><i class="fa fa-lg fa-print"></i></h6></a>
+    <a href="@Url.Action("PrintInvoice","Transaction",new {@InvoiceNo=Model.objTrans.InvoiceNo, @Email=ViewBag.Email})" class="col-md-2 offset-10" ><h6><i class="fa fa-lg fa-print"></i></h6></a>
 }
 
 
@@ -14,7 +14,7 @@
 <h6>Mobile No: @Model.customer.MobileNo</h6>
 <hr />
 <table class="table table-bordered  table-sm">
-    <thead>
+    <thead style="background-color:dodgerblue">
         <tr class="text-center">
             <th>Product Id</th>
             <th>Product Name</th>

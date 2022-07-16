@@ -127,6 +127,9 @@
                             <div class="form-group">
                                 <label>Mobile No</label> <input type="text" id="mobileNo" class=" input-group" required />
                             </div>
+                            <div class="form-group">
+                                <label>Email</label> <input type="text" id="email" class=" input-group" required />
+                            </div>
                             <br />
                             <div class="form-group">
                                 <label>Payment Method</label>
@@ -359,7 +362,7 @@
         }
 
         function generateInvoice(InvoiceNo) {
-            console.log(InvoiceNo);
+           
            
 
 
@@ -367,7 +370,7 @@
             {
                 type: "POST", //HTTP POST Method
                 url: '@Url.Action("generateInvoice", "Transaction")', // Controller/View
-                data: '{InvoiceNo: ' + JSON.stringify(InvoiceNo) + '}',
+                data: '{InvoiceNo: ' + JSON.stringify(InvoiceNo) + ', Email:' + JSON.stringify($("#email").val()) + '}',
 
 
                 contentType: "application/json; charset=utf-8",
