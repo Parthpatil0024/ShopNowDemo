@@ -88,7 +88,7 @@ namespace ShopNow.Controllers
             try
             {
 
-                var senderEmail = new MailAddress("prp9096@gmail.com", "Parth");
+                var senderEmail = new MailAddress("prp9096@gmail.com", "ShopNow");
                 var receiverEmail = new MailAddress(Email, "Receiver");
                 var password = "vmfhxvhenhoarjgx";
                 var sub = "Invoice For Your Purchase dated "+ invoiceModel.objTrans.InvoiceDate;
