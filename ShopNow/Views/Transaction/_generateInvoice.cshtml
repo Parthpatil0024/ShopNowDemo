@@ -4,6 +4,11 @@
 {
 
     <a href="@Url.Action("PrintInvoice","Transaction",new {@InvoiceNo=Model.objTrans.InvoiceNo, @Email=ViewBag.Email})" class="col-md-2 offset-10" ><h6><i class="fa fa-lg fa-print"></i></h6></a>
+    <script>
+        $(document).ready(function () {
+            $("#footer").hide();
+        })
+    </script>
 }
 
 

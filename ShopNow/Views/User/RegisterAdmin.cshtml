@@ -1,0 +1,143 @@
+﻿@model ShopNow.ViewModels1.UserAndStores
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>RegisterAdmin</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jquery")
+</head>
+<body>
+    <div class=" col-md-4 offset-md-4 ">
+        <h1 class="text-center display-4">Admin Registration</h1>
+
+        @using (Html.BeginForm("SaveAdmin", "User", FormMethod.Post))
+        {
+
+            <div class="form-horizontal">
+
+
+                <hr />
+                <div class="row mb-3  input-group">
+                    @Html.Label("UserName", "Name", new { @class = "form-label text-center " })
+
+                    <div class="row mb-4 input-group  ">
+                        @Html.EditorFor(model => model.Admin.UserName, new { htmlAttributes = new { @class = "form-control", @required = "required",placeholder="Please enter your Name", pattern= @"[a-zA-Z][a-zA-Z ]{2,}" } })
+                    </div>
+                </div>
+
+                <div class="row mb-3  input-group">
+                    @Html.Label("EmailId", "Email", new { @class = "form-label text-center" })
+                    <div class="row mb-3 input-group  ">
+                        @Html.EditorFor(model => model.Admin.EmailId, new { htmlAttributes = new { @class = "form-control", type = "email",placeholder="Enter your Email Id", @required = "required" } })
+                    </div>
+                </div>
+
+                <div class="row mb-3  input-group">
+                    @Html.Label("MobileNo", "Mobile No.", new { @class = "form-label text-center" })
+                    <div class="row mb-3 input-group  ">
+                        @Html.EditorFor(model => model.Admin.MobileNo, new { htmlAttributes = new { @class = "form-control",placeholder="Enter your Mobile No.", pattern = @"^!*(\d!*){10,}$", @required = "required" } })
+                    </div>
+                </div>
+
+
+
+                <div class="row mb-3  input-group">
+                    @Html.Label("Password", "Password", new { @class = "form-label text-center" })
+                    <div class="row mb-3 input-group  ">
+                        @Html.EditorFor(model => model.Admin.Password, new { htmlAttributes = new { @class = "form-control", type = "password",placeholder="Enter a password", id = "password", pattern = @"(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", @required = "required" } })
+
+                    </div>
+                    <div class="col-sm-4">
+                        <small id="strengthMessage" class="text-danger">
+
+                        </small>
+                    </div>
+                </div>
+
+                <div class="row mb-3  input-group">
+                    @Html.Label("City", "City", new { @class = "form-label text-center" })
+                    <div class="row mb-3 input-group  ">
+                        @Html.EditorFor(model => model.Admin.City, new { htmlAttributes = new { @class = "form-control",pattern= @"^[a-zA-Z',.\s-]{1,25}$",placeholder="Enter your city", @required = "required" } })
+                    </div>
+                </div>
+                <div class="row mb-3  input-group">
+                    @Html.Label("StoreId", "Store", new { @class = "form-label text-center" })
+                    <div class="row mb-3 input-group  ">
+                        @Html.DropDownListFor(model=>model.Admin.StoreId,new SelectList (Model.lstStores, "Id", "StoreName"), "Please select a Store",  new { @class = "form-control", @required = "required" })
+                    </div>
+                </div>
+
+
+
+                <div class="row mb-3 ">
+                    <div class="text-center">
+                        <input type="submit" value="Register" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</body>
+
+
+</html>
+<script>
+    $(document).ready(function () {
+    $('#password').keyup(function () {
+        $('#strengthMessage').html(checkStrength($('#password').val()))
+    })
+        function checkStrength(password) {
+            var strength = 0
+            if (password.length == 0) {
+                $('#strengthMessage').addClass("text-danger")
+                return ' '
+
+            }
+            if (password.length < 6) {
+                $('#strengthMessage').addClass("text-danger")
+                return 'Too short'
+              
+            }
+           
+        if (password.length > 7) strength += 1
+        // If password contains both lower and uppercase characters, increase strength value.
+        if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 1
+        // If it has numbers and characters, increase strength value.
+        if (password.match(/([a-zA-Z])/) && password.match(/([0-9])/)) strength += 1
+        // If it has one special character, increase strength value.
+        if (password.match(/([!,%,&,@@,#,$,^,*,?,_,~])/)) strength += 1
+        // If it has two special characters, increase strength value.
+        if (password.match(/(.*[!,%,&,@@,#,$,^,*,?,_,~].*[!,%,&,@@,#,$,^,*,?,_,~])/)) strength += 1
+        // Calculated strength value, we can return messages
+        // If value is less than 2
+            if (strength < 2) {
+                $('#strengthMessage').addClass("text-danger")
+            return 'Weak'
+        } else if (strength == 0) {
+                $('#strengthMessage').addClass("text-danger")
+            return ' Weak'
+            } else {
+                $('#strengthMessage').removeClass("text-danger")
+                $('#strengthMessage').addClass("text-success")
+            return 'Strong'
+        }
+    }
+});
+
+
+
+
+
+
+
+</script>

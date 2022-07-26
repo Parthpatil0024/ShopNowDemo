@@ -7,6 +7,8 @@ using System.Data.Entity;
 using ShopNowBL.Model;
 using Microsoft.SqlServer;
 using System.Data.Entity.Migrations;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace ShopNowBL.Repo
 {
@@ -99,6 +101,8 @@ namespace ShopNowBL.Repo
             {
                 newUser.CreatedBy = 2;
                 newUser.CreatedDate = DateTime.Now;
+                newUser.Password=encrypt(newUser.Password);
+            
                 
 
                 context.tblUsers.AddOrUpdate(newUser);
@@ -113,6 +117,7 @@ namespace ShopNowBL.Repo
             using (DBTContext context = new DBTContext())
             {
               user=context.tblUsers.Find(id);
+                user.Password = Decrypt(user.Password);
               
             }
             return user;
@@ -134,11 +139,48 @@ namespace ShopNowBL.Repo
         public tblUser authenticateUser(string emailId,string password)
         {
             tblUser user;
+            password=encrypt(password);
+            
             using(DBTContext context=new DBTContext())
             {
                 user= context.tblUsers.Where(x=>x.EmailId==emailId && x.Password==password).FirstOrDefault();
             }
             return user;
+        }
+
+        public tblUser VerifyEmail(string EmailId)
+        {
+            tblUser user;
+            using (DBTContext context = new DBTContext())
+            {
+                 user = context.tblUsers.Where(u => u.EmailId == EmailId).FirstOrDefault();
+            }
+            return user;
+        }
+
+
+        public bool SaveOTP(tblOTP newOtp)
+        {
+            bool result=false;
+            using (DBTContext context = new DBTContext())
+            {
+                context.tblOTPs.AddOrUpdate(newOtp);
+                context.SaveChanges();
+                result = true;
+            }
+            return (result);
+
+        }
+
+        public tblOTP getOtpByEmail(string EmailId)
+        {  
+            tblOTP newOtp;
+            using(DBTContext context=new DBTContext())
+            {
+                newOtp=context.tblOTPs.Where(x=>x.EmailId==EmailId && x.IsUsed==0 ).OrderByDescending(x=>x.Created_DateTime).FirstOrDefault();
+            }
+
+            return newOtp;
         }
 
         public List<tblUser> listUsers()
@@ -150,6 +192,55 @@ namespace ShopNowBL.Repo
             }
             return usersList;
 
+        }
+        //--------------------------Encryption---------------------------
+        public string encrypt(string encryptString)
+        {
+            string EncryptionKey = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            byte[] clearBytes = Encoding.Unicode.GetBytes(encryptString);
+            using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] {
+            0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
+        });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (System.IO.MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(clearBytes, 0, clearBytes.Length);
+                        cs.Close();
+                    }
+                    encryptString = Convert.ToBase64String(ms.ToArray());
+                }
+            }
+            return encryptString;
+        }
+
+        public string Decrypt(string cipherText)
+        {
+            string EncryptionKey = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            cipherText = cipherText.Replace(" ", "+");
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] {
+            0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
+        });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(cipherBytes, 0, cipherBytes.Length);
+                        cs.Close();
+                    }
+                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
+                }
+            }
+            return cipherText;
         }
 
     }

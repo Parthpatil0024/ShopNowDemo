@@ -53,6 +53,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Model\DBTContext.cs" />
     <Compile Include="Model\tblCustomer.cs" />
+    <Compile Include="Model\tblOTP.cs" />
     <Compile Include="Model\tblStock.cs" />
     <Compile Include="Model\tblStore.cs" />
     <Compile Include="Model\tblTransaction.cs" />

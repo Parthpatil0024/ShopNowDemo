@@ -7,7 +7,8 @@ using ShopNowBL.Repo;
 using ShopNowBL.Model;
 using System.Data.Entity.Migrations;
 using ShopNow.ViewModels1;
-
+using System.Net.Mail;
+using System.Net;
 
 namespace ShopNow.Controllers
 {
@@ -15,6 +16,7 @@ namespace ShopNow.Controllers
     {
         // GET: Customer
         UserRepo userRepo = new UserRepo();
+        StoreRepo storeRepo= new StoreRepo();
 
 
         //-----------------------Customer_________________----------------
@@ -221,6 +223,131 @@ namespace ShopNow.Controllers
         {
             return View();
         }
+
+        public ActionResult RegisterAdmin()
+        {
+            UserAndStores userAndStores = new UserAndStores();  
+            userAndStores.lstStores=storeRepo.listStores();
+            return View(userAndStores);
+        }
+        public ActionResult SaveAdmin(UserAndStores userAndStores)
+        {
+            userAndStores.Admin.RoleId = 1;
+            bool result = userRepo.addUser(userAndStores.Admin);
+
+            if (result) 
+            return RedirectToAction("Login","User");
+           
+            return RedirectToAction("RegisterAdmin", "User");
+        }
+
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+
+        public ActionResult VerifyEmail(string EmailId)
+        {
+          tblUser user=userRepo.VerifyEmail(EmailId);
+            tblOTP objOTP = new tblOTP();
+            bool result = false;
+            if (user != null)
+            {
+                Random r=new Random();
+                int otp=r.Next(100000,999999);
+                objOTP.OTP =Convert.ToString(otp);
+                objOTP.Created_DateTime=DateTime.Now;
+                objOTP.IsUsed = 0;
+                objOTP.EmailId = user.EmailId;
+               result= userRepo.SaveOTP(objOTP);
+
+                if (result)
+                {
+                    try
+                    {
+
+                        var senderEmail = new MailAddress("prp9096@gmail.com", "ShopNow");
+                        var receiverEmail = new MailAddress(user.EmailId, "Receiver");
+                        var password = "vmfhxvhenhoarjgx";
+                        var sub = "OTP for Password Reset";
+                        var body = "Your OTP is "+objOTP.OTP+" valid for 10 minutes.";
+
+                        MailMessage message = new MailMessage();
+                        message.To.Add(user.EmailId);// Email-ID of Receiver  
+                        message.Subject = sub;// Subject of Email  
+                        message.From = senderEmail;// Email-ID of Sender  
+                        message.IsBodyHtml = true;
+                        
+                       
+                        message.Body = body;
+                        SmtpClient SmtpMail = new SmtpClient();
+
+                        SmtpMail.Host = "smtp.gmail.com";
+                        SmtpMail.Port = 587;
+                        SmtpMail.EnableSsl = true;
+                        SmtpMail.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        SmtpMail.UseDefaultCredentials = false;
+                        SmtpMail.Credentials = new NetworkCredential(senderEmail.Address, password);
+                        SmtpMail.Send(message);
+
+                    }
+                    catch (Exception)
+                    {
+                        ViewBag.Error = " Error Sending Email";
+                    }
+                }
+
+            }
+            
+            return Json(user, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult VerifyOtp(string Otp, string EmailId)
+        {
+            tblOTP objOTP=userRepo.getOtpByEmail(EmailId);
+            TimeSpan ts = DateTime.Now - objOTP.Created_DateTime;
+            string result="OTP is already used!!";
+            if (objOTP != null) {
+                if (ts.Minutes <= 10 && Otp == objOTP.OTP)
+                {
+                    objOTP.IsUsed = 1;
+                    userRepo.SaveOTP(objOTP);
+                    result = "Valid OTP";
+                }
+                else if (ts.Minutes > 10)
+                {
+                    result = "OTP has expired!!!";
+                }
+                else
+                {
+                    result = "Invalid OTP";
+                }
+            }
+           
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ResetPassword(string EmailId)
+        {
+            tblUser user=userRepo.VerifyEmail(EmailId);
+            ViewBag.EmailId=user.EmailId;
+
+            return PartialView("_ResetPassword");
+        }
+
+        public ActionResult SavePassword(string email,string pass1)
+        {
+          tblUser user = userRepo.VerifyEmail(email);
+            user.Password = pass1;
+            userRepo.addUser(user);
+
+            
+           return View();
+        }
+
+
 
         public ActionResult authenticateUser(tblUser obj)
         {

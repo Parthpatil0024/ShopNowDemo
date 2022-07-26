@@ -128,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\CustomFilter.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\StockController.cs" />
@@ -140,6 +141,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels1\InvoiceViewModel.cs" />
+    <Compile Include="ViewModels1\UserAndStores.cs" />
     <Compile Include="ViewModels1\UserCustomerModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -235,6 +237,10 @@
     <Content Include="Views\Store\ajaxAddStoreListing.cshtml" />
     <Content Include="Views\Transaction\SelectProducts.cshtml" />
     <Content Include="Views\Transaction\_generateInvoice.cshtml" />
+    <Content Include="Views\User\RegisterAdmin.cshtml" />
+    <Content Include="Views\User\ForgotPassword.cshtml" />
+    <Content Include="Views\User\_ResetPassword.cshtml" />
+    <Content Include="Views\User\SavePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -17,35 +17,35 @@
         <div class="row mb-3  input-group">
             @Html.Label("StoreName", "Store Name", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "form-control", autofocus = true } })
+                @Html.EditorFor(model => model.StoreName, new { htmlAttributes = new { @class = "form-control", pattern = "[a-zA-Z][a-zA-Z ]{2,}",required="required", autofocus = true } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.Label("Address", "Address", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", required="required"} })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.Label("City", "City", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control", pattern = @"^[a-zA-Z',.\s-]{1,25}$",required="required" } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.Label("ContactNo", "Contact No", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.ContactNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ContactNo, new { htmlAttributes = new { @class = "form-control", pattern = @"^!*(\d!*){10,}$", @required = "required" } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.Label("StartedDate", "Started date", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.StartedDate, new { htmlAttributes = new { @class = "form-control", @type="date" } })
+                @Html.EditorFor(model => model.StartedDate, new { htmlAttributes = new { @class = "form-control", @type="date" , max = DateTime.Now.ToString("yyyy-MM-dd"), required="required"} })
             </div>
         </div>
         <br />

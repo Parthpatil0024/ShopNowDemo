@@ -16,35 +16,35 @@
         <div class="row mb-3  input-group">
             @Html.Label("ProductName", "Product Name", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control", autofocus = true } })
+                @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control", pattern = "[a-zA-Z][a-zA-Z ]{2,}", autofocus = true,required="required" } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.Label("ProductQty", "Product Qty", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.ProductQty, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.ProductQty, new { htmlAttributes = new { @class = "form-control",min="1" ,pattern= "^[0-9]*$" ,required = "required" } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.Label("BasePrice", "Base Price", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.BasePrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.BasePrice, new { htmlAttributes = new { @class = "form-control",pattern= @"^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$", required = "required" } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.Label("SellingPrice", "Selling Price", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.SellingPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.SellingPrice, new { htmlAttributes = new { @class = "form-control", pattern = @"^\s*(?=.*[1-9])\d*(?:\.\d{1,2})?\s*$", required = "required" } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.Label("Discount", "Discount", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control",pattern= @"^((100)|(\d{1,2}(.\d*)?))$", required = "required" } })
             </div>
         </div>
 

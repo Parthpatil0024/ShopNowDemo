@@ -82,10 +82,10 @@
                                 Discount <input type="number" id="discount" class=" input-group" readonly />
                             </div>
                             <div>
-                                GST<input type="number" id="gst" class=" input-group" min="0" />
+                                GST<input type="number" id="gst" class=" input-group" min="0" required/>
                             </div>
                             <div>
-                                Quantity<input type="number" id="Qty" class=" input-group" required />
+                                Quantity<input type="number" id="Qty" class=" input-group" pattern= "^[0-9]*$" required />
                             </div>
 
 
@@ -121,25 +121,26 @@
                         <form id="first_form" method="post" action="">
 
                             <div class="form-group">
-                                <label class="control-label">Customer Name</label>  <input type="text" id="custName" class=" input-group" required />
+                                <label class="control-label">Customer Name</label>  <input type="text" id="custName" class=" input-group" pattern = "[a-zA-Z][a-zA-Z ]{2,}" required />
                             </div>
 
                             <div class="form-group">
-                                <label>Mobile No</label> <input type="text" id="mobileNo" class=" input-group" required />
+                                <label>Mobile No</label> <input type="text" id="mobileNo" class=" input-group" pattern = "^!*(\d!*){10,}$" required />
                             </div>
                             <div class="form-group">
-                                <label>Email</label> <input type="text" id="email" class=" input-group" required />
+                                <label>Email</label> <input type="email" id="email" class=" input-group" required />
                             </div>
                             <br />
                             <div class="form-group">
                                 <label>Payment Method</label>
-                                <select id="paymentMethod" required>
-                                    <option disabled selected value> --select-- </option>
-                                    <option value="Cash">Cash</option>
-                                    <option value="Card">Card</option>
-                                    <option value="UPI">UPI</option>
-
-                                </select>
+                               
+                                @Html.DropDownList("paymentMethod", new List<SelectListItem>
+                                {
+                                    new SelectListItem {Text = "Cash", Value = "Cash"},
+                                    new SelectListItem {Text = "Card", Value = "Card"},
+                                    new SelectListItem {Text = "UPI", Value = "UPI"}
+                                    
+                                }, "Please Select", new { @class = "form-control", @id="paymentMethod" })
 
 
 
