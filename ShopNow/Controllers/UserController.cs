@@ -60,6 +60,7 @@ namespace ShopNow.Controllers
 
         public ActionResult saveCustomer(tblCustomer newCust)
         {
+            
             bool result=userRepo.addCustomer(newCust);
             if (result)
             {
@@ -122,13 +123,31 @@ namespace ShopNow.Controllers
         //--------------------------------USER__________________________________________
         public ActionResult addUser()
         {
-            tblUser newUser = new tblUser();
-            return View(newUser);
+            UserAndStores userAndStores=new UserAndStores();
+            userAndStores.lstStores = storeRepo.listStores();
+            return View(userAndStores);
+        }
+        public ActionResult addUserAfterEdit()
+        {
+            tblUser user =new tblUser();
+            return View(user);
         }
 
-        public ActionResult saveUser(tblUser newUser)
+        public ActionResult saveUserAfterEdit(UserAndStores userAndStores)
         {
-            bool result = userRepo.addUser(newUser);
+            bool result = userRepo.saveUserAfterEdit(userAndStores.user);
+            if(result)
+                return RedirectToAction("listUsers");
+
+            return RedirectToAction("addUserAfterEdit");
+        }
+
+
+        public ActionResult saveUser(UserAndStores userAndStores)
+        {
+            var loggedInUser = (tblUser)HttpContext.Session["User"];
+            userAndStores.user.CreatedBy = loggedInUser.Id;
+            bool result = userRepo.addUser(userAndStores.user);
             if (result)
             {
                 return RedirectToAction("listUsers");
@@ -144,9 +163,11 @@ namespace ShopNow.Controllers
         
         public ActionResult editUser(int id)
         {
-            tblUser user = userRepo.findUserById(id);
+            UserAndStores userAndStores = new UserAndStores();
+             userAndStores.user= userRepo.findUserById(id);
+            userAndStores.lstStores= storeRepo.listStores();    
 
-            return View("addUser", user);
+            return View("addUserAfterEdit", userAndStores);
         }
         public ActionResult deleteUser(int id)
         {
@@ -232,8 +253,8 @@ namespace ShopNow.Controllers
         }
         public ActionResult SaveAdmin(UserAndStores userAndStores)
         {
-            userAndStores.Admin.RoleId = 1;
-            bool result = userRepo.addUser(userAndStores.Admin);
+            userAndStores.user.RoleId = 1;
+            bool result = userRepo.addUser(userAndStores.user);
 
             if (result) 
             return RedirectToAction("Login","User");
@@ -271,7 +292,7 @@ namespace ShopNow.Controllers
                         var receiverEmail = new MailAddress(user.EmailId, "Receiver");
                         var password = "vmfhxvhenhoarjgx";
                         var sub = "OTP for Password Reset";
-                        var body = "Your OTP is "+objOTP.OTP+" valid for 10 minutes.";
+                        var body = "Your OTP is "+objOTP.OTP+" valid for 5 minutes.";
 
                         MailMessage message = new MailMessage();
                         message.To.Add(user.EmailId);// Email-ID of Receiver  
@@ -306,25 +327,40 @@ namespace ShopNow.Controllers
         public ActionResult VerifyOtp(string Otp, string EmailId)
         {
             tblOTP objOTP=userRepo.getOtpByEmail(EmailId);
-            TimeSpan ts = DateTime.Now - objOTP.Created_DateTime;
-            string result="OTP is already used!!";
-            if (objOTP != null) {
-                if (ts.Minutes <= 10 && Otp == objOTP.OTP)
+        
+            string result="";
+
+
+            if (objOTP.IsUsed == 0)
+            {
+                TimeSpan ts = DateTime.Now - objOTP.Created_DateTime;
+                if (ts.Minutes <= 5)
                 {
-                    objOTP.IsUsed = 1;
-                    userRepo.SaveOTP(objOTP);
-                    result = "Valid OTP";
-                }
-                else if (ts.Minutes > 10)
-                {
-                    result = "OTP has expired!!!";
+                    if (objOTP.OTP == Otp)
+                    {
+                        objOTP.IsUsed = 1;
+                        userRepo.SaveOTP(objOTP);
+                        result = "Valid OTP";
+                    }
+                    else
+                    {
+                        result = "Invalid OTP";
+                    }
                 }
                 else
                 {
-                    result = "Invalid OTP";
+                    result = "OTP expired";
                 }
             }
-           
+            else
+            {
+                result = "OTP Already Used";
+            }
+
+
+
+
+            
 
             return Json(result, JsonRequestBehavior.AllowGet);
         }

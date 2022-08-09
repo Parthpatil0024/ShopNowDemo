@@ -9,7 +9,7 @@ namespace ShopNow.ViewModels1
 {
     public class UserAndStores
     {
-        public tblUser Admin {get; set;}
+        public tblUser user {get; set;}
         public List<tblStore> lstStores {get; set;}
     }
 }

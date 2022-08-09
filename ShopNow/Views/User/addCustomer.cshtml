@@ -21,7 +21,7 @@
 
             @Html.Label("CustomerName", "Customer Name", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.CustomerName, new { htmlAttributes = new { @class = "form-control", autofocus = true } })
+                @Html.EditorFor(model => model.CustomerName, new { htmlAttributes = new { @class = "form-control", pattern = "[a-zA-Z][a-zA-Z ]{2,}", autofocus = true } })
 
             </div>
         </div>
@@ -29,7 +29,7 @@
         <div class="row mb-3  input-group">
             @Html.Label("MobileNo", "Mobile No", new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.MobileNo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.MobileNo, new { htmlAttributes = new { @class = "form-control", pattern = @"^!*(\d!*){10,}$" } })
 
             </div>
         </div>

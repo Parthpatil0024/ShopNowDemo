@@ -29,21 +29,21 @@
                     @Html.Label("UserName", "Name", new { @class = "form-label text-center " })
 
                     <div class="row mb-4 input-group  ">
-                        @Html.EditorFor(model => model.Admin.UserName, new { htmlAttributes = new { @class = "form-control", @required = "required",placeholder="Please enter your Name", pattern= @"[a-zA-Z][a-zA-Z ]{2,}" } })
+                        @Html.EditorFor(model => model.user.UserName, new { htmlAttributes = new { @class = "form-control", @required = "required",placeholder="Please enter your Name", pattern= @"[a-zA-Z][a-zA-Z ]{2,}" } })
                     </div>
                 </div>
 
                 <div class="row mb-3  input-group">
                     @Html.Label("EmailId", "Email", new { @class = "form-label text-center" })
                     <div class="row mb-3 input-group  ">
-                        @Html.EditorFor(model => model.Admin.EmailId, new { htmlAttributes = new { @class = "form-control", type = "email",placeholder="Enter your Email Id", @required = "required" } })
+                        @Html.EditorFor(model => model.user.EmailId, new { htmlAttributes = new { @class = "form-control", type = "email",placeholder="Enter your Email Id", @required = "required" } })
                     </div>
                 </div>
 
                 <div class="row mb-3  input-group">
                     @Html.Label("MobileNo", "Mobile No.", new { @class = "form-label text-center" })
                     <div class="row mb-3 input-group  ">
-                        @Html.EditorFor(model => model.Admin.MobileNo, new { htmlAttributes = new { @class = "form-control",placeholder="Enter your Mobile No.", pattern = @"^!*(\d!*){10,}$", @required = "required" } })
+                        @Html.EditorFor(model => model.user.MobileNo, new { htmlAttributes = new { @class = "form-control",placeholder="Enter your Mobile No.", pattern = @"^!*(\d!*){10,}$", @required = "required" } })
                     </div>
                 </div>
 
@@ -52,7 +52,7 @@
                 <div class="row mb-3  input-group">
                     @Html.Label("Password", "Password", new { @class = "form-label text-center" })
                     <div class="row mb-3 input-group  ">
-                        @Html.EditorFor(model => model.Admin.Password, new { htmlAttributes = new { @class = "form-control", type = "password",placeholder="Enter a password", id = "password", pattern = @"(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", @required = "required" } })
+                        @Html.EditorFor(model => model.user.Password, new { htmlAttributes = new { @class = "form-control", type = "password",placeholder="Enter a password", id = "password", pattern = @"(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", @required = "required" } })
 
                     </div>
                     <div class="col-sm-4">
@@ -65,13 +65,13 @@
                 <div class="row mb-3  input-group">
                     @Html.Label("City", "City", new { @class = "form-label text-center" })
                     <div class="row mb-3 input-group  ">
-                        @Html.EditorFor(model => model.Admin.City, new { htmlAttributes = new { @class = "form-control",pattern= @"^[a-zA-Z',.\s-]{1,25}$",placeholder="Enter your city", @required = "required" } })
+                        @Html.EditorFor(model => model.user.City, new { htmlAttributes = new { @class = "form-control",pattern= @"^[a-zA-Z',.\s-]{1,25}$",placeholder="Enter your city", @required = "required" } })
                     </div>
                 </div>
                 <div class="row mb-3  input-group">
                     @Html.Label("StoreId", "Store", new { @class = "form-label text-center" })
                     <div class="row mb-3 input-group  ">
-                        @Html.DropDownListFor(model=>model.Admin.StoreId,new SelectList (Model.lstStores, "Id", "StoreName"), "Please select a Store",  new { @class = "form-control", @required = "required" })
+                        @Html.DropDownListFor(model=>model.user.StoreId,new SelectList (Model.lstStores, "Id", "StoreName"), "Please select a Store",  new { @class = "form-control", @required = "required" })
                     </div>
                 </div>
 
@@ -123,9 +123,9 @@
             if (strength < 2) {
                 $('#strengthMessage').addClass("text-danger")
             return 'Weak'
-        } else if (strength == 0) {
+        } else if (strength < 3) {
                 $('#strengthMessage').addClass("text-danger")
-            return ' Weak'
+            return 'Weak'
             } else {
                 $('#strengthMessage').removeClass("text-danger")
                 $('#strengthMessage').addClass("text-success")

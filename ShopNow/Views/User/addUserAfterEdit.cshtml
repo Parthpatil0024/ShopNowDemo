@@ -1,36 +1,37 @@
 ﻿@model ShopNow.ViewModels1.UserAndStores
-
 @{
-    ViewBag.Title = "addUser";
+    ViewBag.Title = "addUserAfterEdit";
 }
 
-<h2>Add User</h2>
-
-@using (Html.BeginForm("saveUser","User",FormMethod.Post)) 
+<h2>Edit User</h2>
+@using (Html.BeginForm("saveUserAfterEdit", "User", FormMethod.Post))
 {
-    
+
     <div class="form-horizontal">
-       
-      
+
+        @Html.HiddenFor(model => model.user.Id)
+        @Html.HiddenFor(model => model.user.Password)
+        @Html.HiddenFor(model=>model.user.CreatedDate)
+        @Html.HiddenFor(model=>model.user.CreatedBy)
         <hr />
         <div class="row mb-3  input-group">
             @Html.LabelFor(model => model.user.UserName, htmlAttributes: new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.user.UserName, new { htmlAttributes = new { @class = "form-control", pattern = "[a-zA-Z][a-zA-Z ]{1,}",required="required" } })
+                @Html.EditorFor(model => model.user.UserName, new { htmlAttributes = new { @class = "form-control", pattern = "[a-zA-Z][a-zA-Z ]{1,}", required = "required" } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.LabelFor(model => model.user.EmailId, htmlAttributes: new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.user.EmailId, new { htmlAttributes = new { @class = "form-control", type="email",required="required"} })
+                @Html.EditorFor(model => model.user.EmailId, new { htmlAttributes = new { @class = "form-control", type = "email", required = "required" } })
             </div>
         </div>
 
         <div class="row mb-3  input-group">
             @Html.LabelFor(model => model.user.MobileNo, htmlAttributes: new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.user.MobileNo, new { htmlAttributes = new { @class = "form-control", pattern = @"^!*(\d!*){10,}$", required="required" } })
+                @Html.EditorFor(model => model.user.MobileNo, new { htmlAttributes = new { @class = "form-control", pattern = @"^!*(\d!*){10,}$", required = "required" } })
             </div>
         </div>
 
@@ -42,21 +43,16 @@
                          new SelectListItem() {Text = "Admin", Value="1"},
                          new SelectListItem() {Text = "Cashier", Value="2"}
 
-     },"Please select a Role", new {@class="form-control", required = "required" })
+     }, "Please select a Role", new { @class = "form-control", required = "required" })
             </div>
         </div>
 
-        <div class="row mb-3  input-group">
-            @Html.LabelFor(model => model.user.Password, htmlAttributes: new { @class = "control-label col-md-1" })
-            <div class="col-md-11">
-                @Html.EditorFor(model => model.user.Password, new { htmlAttributes = new { @class = "form-control", pattern = @"(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}",required="required" } })
-            </div>
-        </div>
+
 
         <div class="row mb-3  input-group">
             @Html.LabelFor(model => model.user.City, htmlAttributes: new { @class = "control-label col-md-1" })
             <div class="col-md-11">
-                @Html.EditorFor(model => model.user.City, new { htmlAttributes = new { @class = "form-control", pattern = @"^[a-zA-Z',.\s-]{1,25}$",required="required" } })
+                @Html.EditorFor(model => model.user.City, new { htmlAttributes = new { @class = "form-control", pattern = @"^[a-zA-Z',.\s-]{1,25}$", required = "required" } })
             </div>
         </div>
 
@@ -75,4 +71,3 @@
         </div>
     </div>
 }
-

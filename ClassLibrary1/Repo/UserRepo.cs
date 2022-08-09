@@ -99,7 +99,7 @@ namespace ShopNowBL.Repo
             bool result = false;
             using (DBTContext context = new DBTContext())
             {
-                newUser.CreatedBy = 2;
+                
                 newUser.CreatedDate = DateTime.Now;
                 newUser.Password=encrypt(newUser.Password);
             
@@ -111,13 +111,28 @@ namespace ShopNowBL.Repo
             }
             return result;
         }
+
+        public bool saveUserAfterEdit(tblUser user)
+        {
+            bool result = false;
+            using (DBTContext context = new DBTContext())
+            {
+               
+                context.tblUsers.AddOrUpdate(user);
+                context.SaveChanges();
+                result = true;
+            }
+            return result;
+        }
+
+
         public tblUser findUserById(int id)
         {
             tblUser user;
             using (DBTContext context = new DBTContext())
             {
               user=context.tblUsers.Find(id);
-                user.Password = Decrypt(user.Password);
+                user.Password = user.Password;
               
             }
             return user;
@@ -177,7 +192,7 @@ namespace ShopNowBL.Repo
             tblOTP newOtp;
             using(DBTContext context=new DBTContext())
             {
-                newOtp=context.tblOTPs.Where(x=>x.EmailId==EmailId && x.IsUsed==0 ).OrderByDescending(x=>x.Created_DateTime).FirstOrDefault();
+                newOtp=context.tblOTPs.Where(x=>x.EmailId==EmailId  ).OrderByDescending(x=>x.Created_DateTime).FirstOrDefault();
             }
 
             return newOtp;
@@ -218,30 +233,7 @@ namespace ShopNowBL.Repo
             return encryptString;
         }
 
-        public string Decrypt(string cipherText)
-        {
-            string EncryptionKey = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            cipherText = cipherText.Replace(" ", "+");
-            byte[] cipherBytes = Convert.FromBase64String(cipherText);
-            using (Aes encryptor = Aes.Create())
-            {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] {
-            0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76
-        });
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(cipherBytes, 0, cipherBytes.Length);
-                        cs.Close();
-                    }
-                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
-                }
-            }
-            return cipherText;
-        }
+        
 
     }
 }
